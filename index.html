@@ -3,15 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Simple Tetris 2D Weinbacher</title>
+    <!--Put the scripts here-->
+    <script src="js/gl-matrix.js"></script>
+    <script src="js/webgl-utils.js"></script>
+
+    <!--Implement shaders, load them inline https://www.html5rocks.com/en/tutorials/webgl/webgl_fundamentals/-->
+    <script id="2d-vertex-shader" type="x-shader/x-vertex">
+    attribute vec2 position;
+    attribute vec4 coordinates;
+    uniform vec4 translation;
+
+    void main() {
+    gl_Position = vec4(position, 0.0, 1.0) + translation;
+
+    }
+    </script>
+
+    <script id="2d-fragment-shader" type="x-shader/x-fragment">
+    precision highp float;
+    uniform vec4 color;
+
+    void main() {
+    gl_FragColor = color;
+    }
+    </script>
+
 </head>
 <body onload="Initialize();">
-<canvas id="Tetris" width="300" height="400">
+<canvas id="Tetris" width="300%" height="300%">
     Browser not capable of displaying WebGl
 </canvas>
 
 <!--Immediately executed when browser sees it-->
 <script src="Tetris.js"></script>
 </body>
+
+<div id="hud" style=" position:absolute; align:top; left:0.5em; top:5px; height:100px; z-index:5; background-color:transparent;">
+    <div style="display:inline; float: left;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <button id="btnDraw" title="drawO" onclick="drawO();">O</button>
+                    <button id="btnRemove" title="removeO" onclick="drawO();">O</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <br />
 <i>Cube Demo Move blocks with <- -></i>
+
+
+
 </html>
