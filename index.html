@@ -10,13 +10,22 @@
     <!--Implement shaders, load them inline https://www.html5rocks.com/en/tutorials/webgl/webgl_fundamentals/-->
     <script id="2d-vertex-shader" type="x-shader/x-vertex">
     attribute vec2 position;
+    uniform vec2 translation;
+    uniform vec2 rotation;
+
+    void main() {
+    vec2 a_position = position + translation;
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+
+    /*attribute vec2 position;
     attribute vec4 coordinates;
     uniform vec4 translation;
 
     void main() {
     gl_Position = vec4(position, 0.0, 1.0) + translation;
 
-    }
+    }*/
     </script>
 
     <script id="2d-fragment-shader" type="x-shader/x-fragment">

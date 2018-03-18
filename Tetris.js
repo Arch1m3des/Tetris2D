@@ -32,25 +32,16 @@ var Initialize = function () {
                 console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
                 break;
             case 'ArrowLeft':
-                var Tx = -0.5, Ty = 0.0, Tz = 0.0;
-                var translation = gl.getUniformLocation(program, 'translation');
-                gl.uniform4f(translation, Tx, Ty, Tz, 0.0);
-                gl.clearColor(0.5, 0.5, 0.5, 1.0);
-                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                gl.drawArrays(gl.TRIANGLE_FAN, 0, vertices.length/2);
-                console.log("Currpos" + program.position.x);
+                var Tx = -0.1+translation[0], Ty = 0.0, Tz = 0.0;
+                translation[0] = Tx;
+                update();
                 console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
 
                 break;
             case 'ArrowRight':
-                var Tx = 0.5, Ty = 0.0, Tz = 0.0;
-                var translation = gl.getUniformLocation(program, 'translation');
-                gl.uniform4f(translation, Tx, Ty, Tz, 0.0);
-                gl.clearColor(0.5, 0.5, 0.5, 1.0);
-                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                gl.drawArrays(gl.TRIANGLE_FAN, 0, vertices.length/2);
-                console.log("Currpos" + program.position.x);
-
+                var Tx = 0.1+translation[0], Ty = 0.0, Tz = 0.0;
+                translation[0] = Tx;
+                update();
                 console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
         }
     };
@@ -110,41 +101,58 @@ var Initialize = function () {
     vertices = cube;
 
     var vertNo = vertices.length/2;  //since they are tupels its legit
-
     var buffer =  gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-    gl.useProgram(program);
+
+    //get color
     program.color = gl.getUniformLocation(program, 'color');
-    gl.uniform4fv(program.color, colors());
-
+    //get pos
     program.position = gl.getAttribLocation(program, 'position');
-    gl.enableVertexAttribArray(program.position);
-    gl.vertexAttribPointer(program.position, 2, gl.FLOAT, false, 0, 0);
-    console.log("Starting Position: " + program.position);
+    program.translation = gl.getUniformLocation(program, "translation");
 
-    // Syntax void gl.drawArrays(mode, first, count); https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawArrays
-    //Basic SHapes http://www.informit.com/articles/article.aspx?p=2111395&seqNum=3
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, vertices.length/2);
-
-    //testing
+    //manipulation
     var angle = 90;
-    var translationXY = [0.5, 0.5, 0.0];
+    var translation = [0.0, 0.0];
     var radian = Math.PI * angle/180.0;
     var cos = Math.cos(radian);
     var sin = Math.sin(radian);
 
+    var col = randColors();
+    update();
 
 
+    function update() {
+        gl.clearColor(0.5, 0.5, 0.5, 1.0); //grey background
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+        gl.useProgram(program);
+
+        //set color
+        gl.uniform4fv(program.color, col);
+        //connect position
+        gl.enableVertexAttribArray(program.position);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.vertexAttribPointer(program.position, 2, gl.FLOAT, false, 0, 0);
+
+        //set translation
+        gl.uniform2fv(program.translation, translation);
+
+
+        //draw object
+        // Syntax void gl.drawArrays(mode, first, count); https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawArrays
+        //Basic SHapes http://www.informit.com/articles/article.aspx?p=2111395&seqNum=3
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, vertices.length/2);
+
+    }
 }
 
 var drawO =  function () {
     return;
 }
 
-function colors(r, g, b, sat) {
+function randColors(r, g, b, sat) {
     sat = sat || 1.0;
     if (!r || !b || !g) {
         r = Math.random();
@@ -159,6 +167,11 @@ function round(num, digits) {
     var t = Math.pow(10, digits);
     return (Math.round((num * t) + (digits>0?1:0)*(Math.sign(num) * (10 / Math.pow(100, digits)))) / t);
 }
+
+function addGeom(gl, vertices) {
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+}
+
 
 function createAndCompileShader(gl, id) {
     if (id == undefined) {
