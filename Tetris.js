@@ -50,7 +50,7 @@ var Initialize = function () {
         var obj = objects[objects.length-1];
 
         switch (e.key) {
-            case 'e':
+            case 'q':
                 if (obj.toRotation[2] == obj.rotation[2]) {
                     obj.toRotation[2] += degToRad(90);
                     cw = false;
@@ -58,7 +58,7 @@ var Initialize = function () {
                     console.log("You pressed " + e.key + '\nRotation Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
                 }
                 break;
-            case 'r':
+            case 'e':
                 if (obj.toRotation[2] == obj.rotation[2]) {
                     cw = true;
                     obj.toRotation[2] -= degToRad(90);
@@ -66,17 +66,21 @@ var Initialize = function () {
                     console.log("You pressed " + e.key + '\nRotation Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
                 }
                 break;
-            case '0':
-                obj.toRotation[2] -= degToRad(90);
-                obj.toRotation[2] = obj.toRotation[2]%(Math.PI*2);
-
-                console.log("You pressed " + e.key + '\nRotation Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
+            case '1':
+                if (obj.toRotation[2] == obj.rotation[2]) {
+                    obj.toRotation[2] += degToRad(90);
+                    cw = false;
+                    lastTime = (new Date).getTime()/10;
+                    console.log("You pressed " + e.key + '\nRotation Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
+                }
                 break;
-            case '8':
-                obj.toRotation[2] += degToRad(90);
-                obj.toRotation[2] = obj.toRotation[2]%(Math.PI*2);
-
-                console.log("You pressed " + e.key + '\nRotation Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
+            case '3':
+                if (obj.toRotation[2] == obj.rotation[2]) {
+                    cw = true;
+                    obj.toRotation[2] -= degToRad(90);
+                    lastTime = (new Date).getTime()/10;
+                    console.log("You pressed " + e.key + '\nRotation Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
+                }
                 break;
             case 'ArrowUp':
                 obj.toPosition[1] = obj.toPosition[1] + unit;
@@ -94,6 +98,26 @@ var Initialize = function () {
                 console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
                 break;
             case 'ArrowRight':
+                obj.toPosition[0] = obj.toPosition[0] + unit;
+                lastTime = (new Date).getTime()/10;
+                console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
+                break;
+            case 'w':
+                obj.toPosition[1] = obj.toPosition[1] + unit;
+                lastTime = (new Date).getTime()/10;
+                console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.', "the position is " + obj.toPosition);
+                break;
+            case 's':
+                obj.toPosition[1] = obj.toPosition[1] - unit;
+                lastTime = (new Date).getTime()/10;
+                console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
+                break;
+            case 'a':
+                obj.toPosition[0] = obj.toPosition[0] - unit;
+                lastTime = (new Date).getTime()/10;
+                console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
+                break;
+            case 'd':
                 obj.toPosition[0] = obj.toPosition[0] + unit;
                 lastTime = (new Date).getTime()/10;
                 console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
@@ -355,13 +379,12 @@ function createObjectFromVertices(vertices) {
     part.toRotation = new Float32Array(3);
 
     //if its a O type that move by 0.5 units left & up
-    if(part.type == 0) {
+    if(part.type == 1) {
         console.log("Vert type: ", part.type);
         part.position[1] -= 0.5*unit;
         part.toPosition[1] -= 0.5*unit;
         part.position[0] += 0.5*unit;
-        part.toPosition[0] += 5*unit;
-
+        part.toPosition[0] += 0.5*unit;
     }
     part.color = randColors();
     part.fixed = false;
