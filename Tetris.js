@@ -99,8 +99,8 @@ var Initialize = function () {
                 console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
                 break;
             case 'x':
-                objects.push(createObjectFromVertices(createTetromino(randTetromino())));
                 console.log("You pressed " + e.key + '\nAdding new Tetromino.');
+                objects.push(createObjectFromVertices(createTetromino(randTetromino())));
                 break;
         }
         update();
@@ -209,12 +209,12 @@ function update() {
             mat4.identity(moveMatrix);
             var rotMatrix = mat4.create();
             mat4.identity(rotMatrix);
-            //adapt movematrix
+
+            //adapt mvMatrix
             mat4.translate(moveMatrix, moveMatrix, el.position);
             mat4.rotateX(rotMatrix, rotMatrix, el.rotation[0]);
             mat4.rotateY(rotMatrix, rotMatrix, el.rotation[1]);
             mat4.rotateZ(rotMatrix, rotMatrix, el.rotation[2]);
-
             mvMatrix = mat4.multiply(mvMatrix, moveMatrix, rotMatrix);
 
             //put matrix to object
@@ -297,8 +297,8 @@ function createTetromino(shape) {
             y = [0,-1,-2,-3];
             break;
         case 1: //O
-            x = [0,1,1,0];
-            y = [0,0,1,1];
+            x = [-0.5,0.5,0.5,-0.5];
+            y = [-0.5,-0.5,0.5,0.5];
             break;
         case 2: //L
             x = [0,1,0,2];
@@ -312,12 +312,12 @@ function createTetromino(shape) {
             x = [1,1,0,0];
             y = [1,0,0,-1];
             break;
-        case 5: //S
-            x = [-1,0,1,1];
-            y = [1,0,0,-1];
+        case 5: //T
+            x = [0,0,0,1];
+            y = [0,-1,1,0];
             break;
         default:
-            x = [0,1,1,0];
+            x = [0,1,0,1];
             y = [0,0,1,1];
             break;
     }
@@ -330,6 +330,8 @@ function createTetromino(shape) {
             -subunit+x[i]*2*subunit,  subunit+y[i]*2*subunit, 0]);
     }
     console.log("created Shape: ", shape);
+    vertices.type = shape;
+
     return vertices;
 }
 
@@ -339,15 +341,28 @@ function createObjectFromVertices(vertices) {
     part.mvMatrix = mat4.create();
     mat4.identity(part.mvMatrix);
     part.vertices = new Float32Array(vertices);
+    part.type = vertices.type;
     part.numItems = 3;
     part.size = part.vertices.length/part.numItems;
+
     part.position = new Float32Array(3);
     part.position[1] = 0.8;
-    part.translation = new Float32Array(3);
-    part.rotation = new Float32Array(3);
     part.toPosition = new Float32Array(3);
     part.toPosition[1] = 0.8;
+
+    part.translation = new Float32Array(3);
+    part.rotation = new Float32Array(3);
     part.toRotation = new Float32Array(3);
+
+    //if its a O type that move by 0.5 units left & up
+    if(part.type == 0) {
+        console.log("Vert type: ", part.type);
+        part.position[1] -= 0.5*unit;
+        part.toPosition[1] -= 0.5*unit;
+        part.position[0] += 0.5*unit;
+        part.toPosition[0] += 5*unit;
+
+    }
     part.color = randColors();
     part.fixed = false;
     part.vertexBuffer = gl.createBuffer();
