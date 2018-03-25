@@ -25,7 +25,7 @@ var Initialize = function () {
     var canvas =  document.getElementById("Tetris");
     initWebGL(canvas);
 
-    texture = loadBackground(gl, 'assets/texture/background.png');
+    texture = loadBackground(gl, 'http://wwwlab.cs.univie.ac.at/~weinbachea88/Tetris/assets/texture/background.png');
 
     program = initShaders();
     prepareProgram(program);
