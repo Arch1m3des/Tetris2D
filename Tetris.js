@@ -4,12 +4,12 @@
 * MatNo.: 1407626
 * Date: 22.03.2018
 * */
+var unit = 0.2;
+var subunit = unit/2;
 
 /*Global Variables*/
 var DEBUGGING = true;
 var objects = [];
-var unit = 0.2;
-var subunit = 0.1;
 var gl;
 var program;
 var aspect;
@@ -17,30 +17,35 @@ var lastTime = 0;
 var cw = true;
 var moveSpeed = 15;
 var rotSpeed = 70;
+var texture;
 
 var Initialize = function () {
+    //created with tutorial from official webgl Tutorial source http://learningwebgl.com/blog/?p=239
     console.log("Initializing WebGl");
     var canvas =  document.getElementById("Tetris");
     initWebGL(canvas);
-    program = initShaders();
 
+    texture = loadBackground(gl, 'assets/texture/background.png');
+
+    program = initShaders();
     prepareProgram(program);
 
     //create init Object + buffers
     var part1 = createObjectFromVertices(createTetromino(1));
-    part1.toPosition = [0.1,-0.7,0];
-    part1.position = [0.1,-0.7,0];
+    part1.toPosition = [subunit,-3*unit-subunit,0];
+    part1.position = [subunit,-3*unit-subunit,0];
     objects.push(part1);
     update();
 
-    //console.log("RandShape", randTetromino);
+    loadBackground(gl, "assets/texture/background.png");
+
+
     objects.push(createObjectFromVertices(createTetromino(0)));
 
     play();
 
-
-
     //add Keyboard listener
+    //source https://www.w3schools.com/jsref/event_onkeydown.asp
     document.onkeydown = function (e) {
         var obj = objects[objects.length-1];
 
@@ -50,7 +55,7 @@ var Initialize = function () {
                     obj.toRotation[2] += degToRad(90);
                     cw = false;
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nRotation Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
+                    console.log("You pressed " + e.key + '\nRotate Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
                 }
                 break;
             case 'e':
@@ -58,7 +63,7 @@ var Initialize = function () {
                     cw = true;
                     obj.toRotation[2] -= degToRad(90);
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nRotation Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
+                    console.log("You pressed " + e.key + '\nRotate Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
                 }
                 break;
             case '1':
@@ -66,7 +71,7 @@ var Initialize = function () {
                     obj.toRotation[2] += degToRad(90);
                     cw = false;
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nRotation Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
+                    console.log("You pressed " + e.key + '\nRotate Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
                 }
                 break;
             case '3':
@@ -74,61 +79,61 @@ var Initialize = function () {
                     cw = true;
                     obj.toRotation[2] -= degToRad(90);
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nRotation Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
+                    console.log("You pressed " + e.key + '\nRotate Shape to ' + round(radToDeg(obj.toRotation[2]),2)+ ' degrees.');
                 }
                 break;
             case 'ArrowUp':
                 obj.toPosition[1] = obj.toPosition[1] + unit;
                 lastTime = (new Date).getTime()/10;
-                console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.', "the position is " + obj.toPosition);
+                console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' percent.', "the position is " + obj.toPosition);
                 break;
             case 'ArrowDown':
                 if (Math.abs(obj.toPosition[1] - obj.position[1]) < subunit) {
                     obj.toPosition[1] = obj.toPosition[1] - unit;
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
+                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' percent.');
                 }
                 break;
             case 'ArrowLeft':
                 if (Math.abs(obj.toPosition[0] - obj.position[0]) < subunit) {
                     obj.toPosition[0] = obj.toPosition[0] - unit;
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
+                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' percent.', obj.toPosition[0]);
                 }
                 break;
             case 'ArrowRight':
                 if (Math.abs(obj.toPosition[0] - obj.position[0]) < subunit) {
                     obj.toPosition[0] = obj.toPosition[0] + unit;
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
+                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' percent.', obj.toPosition[0]);
                 }
                 break;
             case 'w':
                 if (Math.abs(obj.toPosition[1] - obj.position[1]) < subunit) {
                     obj.toPosition[1] = obj.toPosition[1] + unit;
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.', "the position is " + obj.toPosition);
+                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' percent.', "the position is " + obj.toPosition);
                 }
                 break;
             case 's':
                 if (Math.abs(obj.toPosition[1] - obj.position[1]) < subunit) {
                     obj.toPosition[1] = obj.toPosition[1] - unit;
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
+                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' percent.');
                 }
                 break;
             case 'a':
                 if (Math.abs(obj.toPosition[0] - obj.position[0]) < subunit) {
                     obj.toPosition[0] = obj.toPosition[0] - unit;
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
+                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' percent.');
                 }
                 break;
             case 'd':
                 if (Math.abs(obj.toPosition[0] - obj.position[0]) < subunit) {
                     obj.toPosition[0] = obj.toPosition[0] + unit;
                     lastTime = (new Date).getTime()/10;
-                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' pixels.');
+                    console.log("You pressed " + e.key + '\nMoving Shape by ' + unit + ' percent.');
                 }
                 break;
             case 'x':
@@ -168,7 +173,9 @@ function animate() {
             var moveDist = obj.toPosition[0] - obj.position[0];  //>right+, <left-
             var increment = moveSpeed * elapsed / 1000;
 
-            console.log("MoveDist: ", moveDist, " Increment: ", increment, " Elapsed: ", elapsed);
+            if(DEBUGGING) {
+                console.log("MoveDist: ", moveDist, "Obj.toPosition", obj.toPosition[0], " Increment: ", increment, " Elapsed: ", elapsed);
+            }
             if (2 * increment > Math.abs(moveDist)) {
                 console.log("PosX reached")
                 obj.position[0] = obj.toPosition[0];
@@ -185,7 +192,10 @@ function animate() {
             var moveDist = obj.toPosition[1] - obj.position[1];  //>up+, <down-
             var increment = moveSpeed * elapsed / 1000;
 
-            console.log("MoveDist: ", moveDist, " Increment: ", increment, " Elapsed: ", elapsed);
+            if(DEBUGGING) {
+                console.log("MoveDist: ", moveDist, " Increment: ", increment, " Elapsed: ", elapsed);
+            }
+
             if (2 * increment > Math.abs(moveDist)) {
                 console.log("PosY reached")
                 obj.position[1] = obj.toPosition[1];
@@ -201,7 +211,10 @@ function animate() {
         if(obj.rotation[2] != obj.toRotation[2]) {
             var rotDist= Math.abs(obj.toRotation[2] - obj.rotation[2]);
             var increment = rotSpeed * elapsed / 1000;
-            console.log("RotDist: ", round(radToDeg(rotDist),2), "increment: ", radToDeg(increment), "currentRot: ", radToDeg(obj.rotation[2]), "elapsed", elapsed ,"direction: ", cw ? "clockwise" : "counterclockwise");
+
+            if(DEBUGGING) {
+                console.log("RotDist: ", round(radToDeg(rotDist),2), "increment: ", radToDeg(increment), "currentRot: ", radToDeg(obj.rotation[2]), "elapsed", elapsed ,"direction: ", cw ? "clockwise" : "counterclockwise");
+            }
 
             //break condition
             if(2*increment > rotDist) {
@@ -224,8 +237,8 @@ function animate() {
 
 function update() {
     gl.clearColor(0.5, 0.5, 0.5, 1.0); //grey background
-
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    //gl.enable(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    //gl.enable(gl.DEPTH_TEST);
 
     gl.useProgram(program);
 
@@ -330,7 +343,7 @@ function createTetromino(shape) {
     switch (shape) {
         case 0: //I
             x = [0,0,0,0];
-            y = [0,-1,-2,-3];
+            y = [2,1,0,-1];
             break;
         case 1: //O
             x = [-0.5,0.5,0.5,-0.5];
@@ -392,7 +405,6 @@ function createObjectFromVertices(vertices) {
 
     //if its a O type that move by 0.5 units left & up
     if(part.type == 1) {
-        console.log("Vert type: ", part.type);
         part.position[1] -= 0.5*unit;
         part.toPosition[1] -= 0.5*unit;
         part.position[0] += 0.5*unit;
@@ -463,6 +475,13 @@ function createAndCompileShader(gl, id) {
 
 
 //HELPER FUNCTIONS ------------------------------------------------------
+function unitChange() {
+    unit = parseFloat(document.getElementById("unitSize").value);
+    subunit = unit/2;
+    objects = [];
+    Initialize();
+}
+
 function newTetromino() {
     console.log("Adding new Tetromino with button.");
     objects.push(createObjectFromVertices(createTetromino(randTetromino())));
@@ -470,7 +489,9 @@ function newTetromino() {
 }
 
 function removeLastTetromino() {
-    objects.pop();
+    if(objects.length>0) {
+        objects.pop();
+    }
 }
 
 function randTetromino() {
@@ -500,5 +521,21 @@ function degToRad(deg){
 
 function radToDeg(rad){
     return rad*180/Math.PI;
+}
+
+//ASYNCH FUNCTIONS
+
+//texture loader from mozilla dev tutorials https://developer.mozilla.org/de/docs/Web/API/WebGLRenderingContext/texImage2D
+function loadBackground(gl, src) {
+    var background = gl.createTexture();
+    var image = new Image();
+
+    //asynch call
+    image.src.onload = function() {
+        gl.bindTexture(gl.TEXTURE_2D, background);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    }
+
+    image.src = src;
 }
 

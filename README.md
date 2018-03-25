@@ -1,4 +1,15 @@
 #Tetris 2D
-##author: Andy Vine
+####author: Andy Vine 1407626
 
 This is my project for a Tetris 2D clone made entirely in WebGL
+This is V1.0 as part of my GFX assigment Lab1a
+
+###Instructions:
+Move the blocks with ArrowKeys or WASD,
+Rotate them with Q and E or 1 and 3.
+Place a Tetromino with x or press the button.
+
+The size of the Tetrominos can be adjusted with the Unitsize input field and the coresponding variable is called *unit*
+Movement speed can be altered in the Tetris.js script with the variable *moveSpeed*.
+
+Rotation speed can be altered in the Tetris.js script with the variable *rotSpeed*. 

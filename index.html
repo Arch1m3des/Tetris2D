@@ -31,7 +31,7 @@
 
 </head>
 <body onload="Initialize();">
-<canvas id="Tetris" width="500" height="500">
+<canvas id="Tetris" style="background: url('assets/texture/background.png')" width="500" height="500">
     Browser not capable of displaying WebGl
 </canvas>
 
@@ -43,6 +43,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
+                    <label><font face="verdana"><b>Unitsize:</b></font></label>
+                    <input type="number" id="unitSize" placeholder="Unit" value="0.2" step="0.1" min="0.00" max="0.9" onchange="unitChange();">
+
                     <button id="btnDraw" title="AddTetromino" onclick="newTetromino();">Add new Tetromino [X]</button>
                     <button id="btnRemove" title="removeO" onclick="removeLastTetromino();">remove last Tetromino</button>
                 </div>
