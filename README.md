@@ -1,5 +1,5 @@
 #Tetris 2D
-####author: Andy Vine 1407626
+####author: Andreas Weinbacher 1407626
 
 This is my project for a Tetris 2D clone made entirely in WebGL
 This is V1.0 as part of my GFX assigment Lab1a

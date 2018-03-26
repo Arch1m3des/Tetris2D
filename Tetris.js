@@ -159,6 +159,9 @@ function play() {
 function animate() {
     //animate only last created object
     var obj = objects[objects.length-1];
+    if(!obj) {
+        return false;
+    }
 
     if (obj.toRotation[2] == obj.rotation[2] && obj.toPosition == obj.position) {
         return false;
@@ -227,6 +230,8 @@ function animate() {
             }
 
         }
+
+        //todo falling animation
 
     }
     lastTime = currentTime;
@@ -489,7 +494,7 @@ function newTetromino() {
 }
 
 function removeLastTetromino() {
-    if(objects.length>0) {
+    if(objects.length>1) {
         objects.pop();
     }
 }
